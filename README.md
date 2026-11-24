@@ -45,7 +45,7 @@ npm.cmd run dev
 | `?` | 显示按键帮助 |
 | `q` | 退出 |
 
-命令模式支持 `:play`、`:pause`、`:next`、`:prev`、`:now`、`:vol 50`、`:seek 90` 与 `:q`。界面使用原位刷新，避免 PowerShell 的清屏闪烁。
+命令模式支持 `:play`、`:pause`、`:next`、`:prev`、`:now`、`:vol 50`、`:seek 90`、`:help`（或 `:?`）与 `:q`。界面使用原位刷新，避免 PowerShell 的清屏闪烁。
 
 默认会使用 ANSI 颜色区分播放状态、焦点和进度；如果终端主题不兼容，可在 PowerShell 中执行 `$env:NO_COLOR = '1'` 后再启动。
 

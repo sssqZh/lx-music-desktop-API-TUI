@@ -178,10 +178,13 @@ const refresh = async () => {
   if (refreshing) return
   refreshing = true
   try {
+    const wasOffline = latestStatus === null
     latestStatus = await (await request('/status', {
       filter: 'status,name,singer,albumName,lyricLineText,duration,progress,volume',
     })).json()
-    if (!message.startsWith('Sent ') && !message.startsWith('Command ')) message = `Connected: ${apiBase}`
+    // Only announce the connection on the offline -> online transition;
+    // otherwise every tick would wipe transient feedback messages.
+    if (wasOffline && !message.startsWith('Sent ') && !message.startsWith('Command ')) message = `Connected: ${apiBase}`
   } catch (error) {
     latestStatus = null
     message = `API unavailable: ${error.message}`
@@ -238,9 +241,12 @@ const runCommand = async (input) => {
   }
   if (name === 'vol' && Number.isFinite(value)) return control('/volume', { volume: clamp(Math.round(value), 1, 100) })
   if (name === 'seek' && Number.isFinite(value)) return control('/seek', { offset: Math.max(0, Math.round(value)) })
-  message = name === 'help'
-    ? 'Commands: :play :pause :next :prev :vol 50 :seek 90 :reload :now :q'
-    : `Unknown command: ${name}. Try :help`
+  if (name === 'help' || name === '?') {
+    message = 'Commands: :play :pause :next :prev :vol 50 :seek 90 :reload :now :help :q'
+    render()
+    return
+  }
+  message = `Unknown command: ${name}. Try :help`
   render()
 }
 
